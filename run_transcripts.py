@@ -124,8 +124,8 @@ for epoch in range(Max_Iter):
             hidden = lstm_model.init_hidden().cuda()
             cell = lstm_model.init_hidden().cuda()
 
-            for i in range(len(X[i])):
-                logit1, logit2, hidden, cell = lstm_model(line_tensor[i], hidden, cell)
+            for j in range(len(X[i])):
+                logit1, logit2, hidden, cell = lstm_model(line_tensor[j], hidden, cell)
             
             optimizer.zero_grad()
             loss1 = criterion(logit1, label1)
