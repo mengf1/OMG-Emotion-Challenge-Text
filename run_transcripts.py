@@ -35,7 +35,7 @@ data = util.process_transcripts(input_file, input_file2)
 Xv, Yv, corpus = util.read_data_omg(data)
 
 # prepare embedding
-emb_file = "/share/yali3991/Workspace/mp/data/glove/glove.6B.100d.txt"
+emb_file = "../glove/glove.6B.100d.txt"
 w2v = util.load_embeddings_from_glove(emb_file, corpus.word2index)
 
 # model

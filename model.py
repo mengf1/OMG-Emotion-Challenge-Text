@@ -23,7 +23,7 @@ class LSTM_Text(nn.Module):
 
     def forward(self, input, hidden, cell):
         hidden, cell = self.lstm(input, (hidden, cell))
-        output = self.i2o(hidden)
-        logit1 = self.fc1(output)
-        logit2 = self.fc2(output)
+        share = self.i2o(hidden)
+        logit1 = self.fc1(share)
+        logit2 = self.fc2(share)
         return logit1, logit2, hidden, cell
