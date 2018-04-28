@@ -21,10 +21,10 @@ def clean_str(string):
     string = re.sub(r"\)", " \) ", string)
     string = re.sub(r"\?", " \? ", string)
     string = re.sub(r"\s{2,}", " ", string)
-    return string.strip()
+    return string.strip().lower()
 
 def process_transcripts(text_file, video_file):
-    trans = {}
+    T = {}
     with open(text_file) as f:
         f_csv = csv.reader(f)
         headers = next(f_csv)
@@ -32,8 +32,8 @@ def process_transcripts(text_file, video_file):
             video = row[1]
             utterance = row[2]
             transcript = row[3]
-            trans[(video, utterance)] = transcript
-    data = []
+            T[(video, utterance)] = transcript
+    D = []
     with open(video_file) as f:
         f_csv = csv.reader(f)
         headers = next(f_csv)
@@ -42,9 +42,9 @@ def process_transcripts(text_file, video_file):
             utterance = row[4]
             arousal = row[5]
             valence = row[6]
-            transcript = trans[(video, utterance)]
-            data.append([video, utterance, clean_str(transcript), arousal, valence])
-    return data
+            transcript = T[(video, utterance)]
+            D.append([video, utterance, clean_str(transcript), arousal, valence])
+    return D
 
 # corpus
 class Corpus:
@@ -91,20 +91,17 @@ def read_data_omg(data_set):
 # file = "/path/to/glove.6B.100d.txt"
 def load_embeddings_from_glove(emb_file, word2index, emb_size = 100):
     # Initialise embeddings to random values
-    #emb_size = 100
     vocab_size = len(word2index)
     sd = 1/np.sqrt(emb_size)  # standard deviation to use
     w2v = np.random.normal(0, scale=sd, size=[vocab_size, emb_size])
     w2v = w2v.astype(np.float32)
 
     # Extract desired glove word vectors from a text file
-    #with open(emb_file, encoding="utf-8", mode="r") as text_file:
     with open(emb_file, mode="r") as text_file:
         for line in text_file:
             # Separate the values from the word
             line = line.split()
             word = line[0]
-
             # If word is in our vocab, then update the corresponding values
             index = word2index.get(word, None)
             if index is not None:

@@ -26,7 +26,6 @@ data = util.process_transcripts(input_file, input_file2)
 # prepare data
 X, Y, corpus = util.read_data_omg(data)
 
-
 # data set - dev
 input_file = "../omg_ValidationTranscripts.csv"
 input_file2 = "../omg_ValidationVideos.csv"
@@ -43,7 +42,7 @@ emb_dim = 100
 lstm_model = model.LSTM_Text(emb_dim, 128, 32).cuda()
 
 def sent_to_tensor(x):
-    tensor = torch.zeros(len(x), 1, n_token)
+    tensor = torch.zeros(len(x), 1, emb_dim)
     for index, tok_id in enumerate(x):
         tensor[index][0] = torch.from_numpy(w2v[tok_id])
     return tensor
@@ -77,11 +76,12 @@ def eval(X, Y, model):
     model.cuda()
     return ccc1, ccc2, mse1, mse2
 
+# from OMG
 def mse(y_true, y_pred):
     from sklearn.metrics import mean_squared_error
     return mean_squared_error(y_true,y_pred)
 
-
+# from OMG
 def ccc(y_true, y_pred):
     #print(y_true, y_pred)
     true_mean = numpy.mean(y_true)
@@ -102,13 +102,14 @@ def ccc(y_true, y_pred):
 
     return ccc, rho
 
-
+# start to train
 optimizer = torch.optim.Adam(lstm_model.parameters(), lr=args.lr)
 
 train_res = []
 dev_res = []
 criterion = nn.MSELoss()
-for epoch in range(20): 
+Max_Iter = 20
+for epoch in range(Max_Iter): 
     for i in range(len(X)):
         if len(X[i]) == 0:
             continue
@@ -139,7 +140,7 @@ for epoch in range(20):
     ccc1, ccc2, mse1, mse2= eval(Xv,Yv, lstm_model)
     print("Dev", ccc1, ccc2, mse1, mse2)
     dev_res.append((ccc1, ccc2, mse1, mse2))
-    print(epoch)
+    print("Epoch[Finished]", epoch)
 print("Train", train_res)
 print("Dev", dev_res)
 
